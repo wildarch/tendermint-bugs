@@ -50,3 +50,4 @@ Eventually you should see this line in the test output:
 You can then stop both the server and the nodes (with Ctrl-C).
 
 To check buggy testcases, change the `-bug` flag to something like `-bug bug001`.
+All testcases are contained in `tendermint-bugs/bugs.go`.

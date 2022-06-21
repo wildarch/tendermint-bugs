@@ -14,22 +14,26 @@ import (
 	"github.com/netrixframework/tendermint-testing/util"
 )
 
-var bug = flag.String("bug", "", "Testcase to run (dummy, bug001)")
+var bug = flag.String("bug", "", "Testcase to run (dummy, bug001, bug002)")
 
 func main() {
 	flag.Parse()
 	sysParams := common.NewSystemParams(4)
-	testcase := tendermintbugs.Dummy(sysParams)
+	var testcase *testlib.TestCase
 	switch *bug {
 	case "dummy":
 		testcase = tendermintbugs.Dummy(sysParams)
 	case "bug001":
 		testcase = tendermintbugs.Bug001(sysParams)
+	case "bug002":
+		testcase = tendermintbugs.Bug002(sysParams)
 	default:
+		fmt.Println("-bug is a required flag")
 		flag.Usage()
 		os.Exit(1)
 	}
 
+	// Catch SIGTERM, and stop the server if we receive it
 	termCh := make(chan os.Signal, 1)
 	signal.Notify(termCh, os.Interrupt, syscall.SIGTERM)
 
@@ -53,6 +57,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Stop the server if we receive SIGTERM
 	go func() {
 		<-termCh
 		server.Stop()
